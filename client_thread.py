@@ -8,7 +8,7 @@ from database import SessionLocal
 from typing import List
 from pyfcm import FCMNotification
 FCM_API_KEY = "YOUR_FCM_SERVER_KEY"  # Replace with your actual Firebase Server Key
-push_service = FCMNotification(api_key=FCM_API_KEY)
+push_service = FCMNotification(FCM_API_KEY)
 
 class ClientThread(threading.Thread):
     def __init__(self,conn,addr):
@@ -121,147 +121,7 @@ class ClientThread(threading.Thread):
                 print("record creation failed in Devicedata",e)
             
 
-            # try:
-            #     live_rec=Livedata_AIS.objects.filter(imei=self.imei)
-            #     if live_rec.exists():
-            #         live_rec=live_rec[0]
-            #         try:
-            #             # UPDATING ALERTS
-            #             #1.overspeed alert status
-            #             if float(data_list[15]) >60 :
-            #                 live_rec.overspeed = formated_date
-                        
-            #             #2.emergency alert status
-                        
-            #             if data_list[4] == "10" or other_info=="EmergencyAlert":                            
-            #                 live_rec.emergency = ctime
-            #             elif data_list[4] == "11" or other_info=="EmergencyAlertOFF":                            
-            #                 live_rec.emergency = "Normal"                          
-
-            #             #3.main battery alert status
-            #             if data_list[4] == "3" or other_info=="Vehicle Battery Disconnect":
-            #                 live_rec.main_battery ='Disconnect '+ctime
-            #             elif data_list[4] == "6" or other_info=="Vehicle Battery Reconnect":
-            #                 live_rec.main_battery = 'Connect '+ctime 
-
-            #             #4.Internal battery alert status
-            #             if data_list[4] == "4" or other_info=="Internal Battery Low":
-            #                 live_rec.internal_battery ='Low '+ctime
-            #             elif data_list[4] == "5" or other_info=="Internal Battery Charged":
-            #                 live_rec.internal_battery = 'Charged '+ctime 
-                        
-            #             #5.GPS box alert status
-            #             if data_list[4] == "9":
-            #                 live_rec.gps_box = ctime
-                        
-            #             #6.parameter change over air alert status
-            #             if data_list[4] == "12" or other_info=="Over the air Update":
-            #                 live_rec.para_change =ctime
-            #             #other warning alert status
-            #             if data_list[4] == "13" or other_info=="Harsh Breaking":
-            #                 live_rec.harsh_breaking =ctime                        
-            #             if data_list[4] == "14" or other_info=="Harsh Acceleration":
-            #                 live_rec.harsh_acc =ctime
-            #             if data_list[4] == "15" or other_info=="Rash Turning":
-            #                 live_rec.rash_turn =ctime
-            #             if data_list[4] == "16" or other_info=="TamperAlert":
-            #                 live_rec.tampered =ctime
-            #             if data_list[4] == "19" or other_info=="Collision Alert":
-            #                 live_rec.collision =ctime
-            #             if data_list[4] == "20" or other_info=="Overspeed":
-            #                 live_rec.overspeed =ctime
-            #             if data_list[26] == "1":
-            #                 live_rec.sos =ctime                         
-            #             live_rec.device_data =device_msg
-            #             live_rec.ctime=ctime
-            #             live_rec.systemtime=systemtime
-            #             live_rec.packet_type=packet_type
-            #             live_rec.other_info=other_info
-                        
-            #             live_rec.save()
-            #             print("live updated")
-            #         except Exception as e:
-            #             print("live rec delete exception, ::",e)
-            #     else:
-            #         #alerts
-            #         if float(data_list[15]) >60 :
-            #                 overspeed = ctime 
-            #         elif data_list[4] == "20" or other_info=="Overspeed":
-            #             overspeed =ctime
-            #         else:
-            #             overspeed ="Normal"                                     
-            #         if data_list[4] == "10" or other_info=="EmergencyAlert":                            
-            #             emergency = ctime
-            #         else:                            
-            #             emergency = "Normal" 
-            #         if data_list[4] == "3" or other_info=="Vehicle Battery Disconnect":
-            #             main_battery ='Disconnect '+ctime
-            #         elif data_list[4] == "6" or other_info=="Vehicle Battery Reconnect":
-            #             main_battery = 'Connect '+ctime 
-            #         else:
-            #             main_battery ="Normal"
-            #         if data_list[4] == "4" or other_info=="Internal Battery Low":
-            #             internal_battery ='Low '+ctime
-            #         elif data_list[4] == "5" or other_info=="Internal Battery Charged":
-            #             internal_battery = 'Charged '+ctime 
-            #         else:
-            #             internal_battery ='Normal'
-                    
-            #         if data_list[4] == "9":
-            #             gps_box ='Opened '+ctime
-            #         else:
-            #             gps_box ="Normal"
-            #         if data_list[4] == "12" or other_info=="Over the air Update":
-            #             para_change =ctime
-            #         else:
-            #             para_change ="Normal"
-            #         if data_list[4] == "13" or other_info=="Harsh Breaking":
-            #             harsh_breaking =ctime  
-            #         else:
-            #             harsh_breaking ="Normal"                     
-            #         if data_list[4] == "14" or other_info=="Harsh Acceleration":
-            #             harsh_acc =ctime
-            #         else:
-            #             harsh_acc ="Normal"
-            #         if data_list[4] == "15" or other_info=="Rash Turning":
-            #             rash_turn =ctime
-            #         else:
-            #             rash_turn ="Normal"
-            #         if data_list[4] == "16" or other_info=="TamperAlert":
-            #             tampered =ctime
-            #         else:
-            #             tampered ="Normal"
-            #         if data_list[4] == "19" or other_info=="Collision Alert":
-            #             collision =ctime
-            #         else:
-            #             collision ="Normal"
-            #         if data_list[26] == "1":
-            #             sos =ctime
-            #         else:
-            #             sos="Normal"
-            #         data_rec=Livedata_AIS.objects.create(
-            #             imei = self.imei,
-            #             device_data = device_msg,
-            #             ctime = ctime,
-            #             systemtime = systemtime,
-            #             packet_type = packet_type,
-            #             overspeed = overspeed,
-            #             emergency = emergency,
-            #             collision=collision,
-            #             rash_turn=rash_turn,
-            #             harsh_acc=harsh_acc,
-            #             harsh_breaking=harsh_breaking,
-            #             gps_box=gps_box,
-            #             para_change=para_change,
-            #             tampered=tampered,
-            #             internal_battery=internal_battery,
-            #             main_battery=main_battery,
-            #             other_info=other_info,
-            #             sos=sos
-            #         )                 
-            #     print("record created in live  table::")
-            # except Exception as e:
-            #     print("record creation failed in Livedata_AIS:::",e)
+           
         elif packet_type == 'emergency':
             msg_date=data_list[4]
             formated_date=str(msg_date[4:8])+"-"+str(msg_date[2:4])+"-"+msg_date[:2]
@@ -289,22 +149,7 @@ class ClientThread(threading.Thread):
                 print("record creation failed in Devicedata_AIS::::",e)
             
             
-            # try:
-            #     live_rec=Livedata_AIS.objects.filter(imei=self.imei)
-            #     if live_rec.exists():
-            #         live_rec=live_rec[0]
-            #         try:
-            #             if data_list[1]=='EMR':
-            #                 live_rec.emergency = formated_date
-            #             elif data_list[1]=='SEM':
-            #                 live_rec.emergency = 'Normal'
-            #             live_rec.save()    
-            #         except Exception as e:
-            #             print("record update failed in Livedata_AIS:::",)
-            #     else:
-            #         print("No Live rec for this imei")        
-            # except Exception as e:
-            #     print("Live record fetch issue:::",e)  
+            
     
 
 

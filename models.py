@@ -92,3 +92,12 @@ class DeviceData(Base):
     def __repr__(self):
         return f"<Devicedata(data='{self.message}'>"
     
+class FirebaseTable(Base):
+    __tablename__ = 'FirebaseTable'
+
+    id = Column(Integer, primary_key=True)
+    imei = Column(String(15), ForeignKey('DeviceTable.imei'))
+    fcm_token = Column(String)     
+
+    def __repr__(self):
+        return f"<Firebase token for {self.imei} token = {self.fcm_token}>"

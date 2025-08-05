@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  backend:
+    build: .
+    container_name: fastapi_app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+    depends_on:
+      - db
+      - init-db
+    volumes:
+      - .:/app
+    restart: always
+
+  db:
+    image: postgres:14
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+  init-db:
+    build: .
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: ["python", "create_tables.py"]
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:

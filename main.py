@@ -1,8 +1,43 @@
 from fastapi import FastAPI, Depends, HTTPException
 from database import SessionLocal
-from models import DeviceTable
+from models import *
 from thread import ServerThread
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from enum import Enum
+from typing import Optional
+from datetime import date, datetime
+from decimal import Decimal
+
+
+
+class UserCreate(BaseModel):
+    username: str
+    first_name: str
+    email: str
+    phone: str
+    added_by: Optional[str] = None
+    company_details: Optional[str] = None
+    other_info: Optional[str] = None
+    user_type: UserTypeEnum = UserTypeEnum.ADMIN
+
+class DeviceCreate(BaseModel):
+    imei: str
+    device_company: str
+    device_model: Optional[str]
+    icc_id: str
+    unique_id: Optional[str] = "N"
+    primary_contact: Decimal
+    secondary_contact: Optional[Decimal] = 0
+    version: Optional[str] = "1"
+    activation_status: bool
+    activation_date: Optional[date]
+    current_owner_username: str
+    added_date: Optional[date] = None
+    live_data: Optional[str] = None
+    live_data_type: Optional[str] = None
+    timestamp: Optional[datetime] = None
+    fcm_token: Optional[str] = None
 
 app = FastAPI()
 
@@ -20,6 +55,33 @@ def index():
     tcp_server_thread.start()
     print("TCP server  running.")
     return {"message": "TCP server is running now!"}
+
+@app.post("/addUser")
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    existing_user = db.query(User).filter(User.username == user.username).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
+
+    new_user = User(**user.model_dump())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"message": "User created", "id": new_user.id}
+
+@app.post("/addDevice")
+def create_device(device: DeviceCreate, db: Session = Depends(get_db)):
+    # Check if device with same IMEI already exists
+    existing_device = db.query(DeviceTable).filter(DeviceTable.imei == device.imei).first()
+    if existing_device:
+        raise HTTPException(status_code=400, detail="Device with this IMEI already exists.")
+
+    # Create device instance
+    new_device = DeviceTable(**device.model_dump())
+
+    db.add(new_device)
+    db.commit()
+    db.refresh(new_device)
+    return {"message": "Device created successfully", "imei": new_device.imei}
 
 @app.get("/devicedata/{imei}")
 def get_device_data(imei: str, db=Depends(get_db)):
