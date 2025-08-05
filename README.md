@@ -28,13 +28,23 @@ modify .env file
 
 docker-compose up -d --build
 
+4. Go to browser and run http://localhost:8000/startup   to start the server thread
+
+5. API endpoints at : http://localhost:8000/docs 
+6. Add a user
+7. Add a device
+8. send messages to socket port: 8080 (or create a .py file using the client program sample given below and run it . make sure you replace the imei with your imei)
+
 [docker-compose down       #  Stop and remove old containers    
 
 docker exec -it <containername> bash  # Access a container 
 ]
 
-The FastAPI app will be available at http://localhost:8000.
+The FastAPI app will be available at http://localhost:8000
+API endpoints at : http://localhost:8000/docs  
 Server will be listening at port 8080
+
+LINK TO AIS PROTOCOL DOCUMENT- https://morth.nic.in/sites/default/files/Finalized_Draft_AIS_140_regarding_Intelligent_Transportation_Systems_.pdf
 
 ## CLIENT PROGRAM SAMPLE FOR INITIAL TESTING TCP SOCKET COMMUNICATION ##
 ************************************************************************
